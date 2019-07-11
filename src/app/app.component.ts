@@ -1,26 +1,30 @@
-import { Component } from '@angular/core';
+import { Component, ViewChild, OnInit } from '@angular/core';
 
-import { Platform } from '@ionic/angular';
-import { SplashScreen } from '@ionic-native/splash-screen/ngx';
-import { StatusBar } from '@ionic-native/status-bar/ngx';
+import { IonNav } from '@ionic/angular';
 
 @Component({
   selector: 'app-root',
-  templateUrl: 'app.component.html'
+  template: '<ion-app><ion-nav></ion-nav></ion-app>'
 })
-export class AppComponent {
-  constructor(
-    private platform: Platform,
-    private splashScreen: SplashScreen,
-    private statusBar: StatusBar
-  ) {
-    this.initializeApp();
+export class AppComponent implements OnInit {
+  @ViewChild(IonNav) nav: IonNav;
+
+  ngOnInit() {
+    this.nav.push(NavComponent, {privateParam: 'overriden value from NavParams'});
+  }
+}
+
+@Component({
+  template: 'Value of privateParam is {{ privateParam | json }}'
+})
+export class NavComponent implements OnInit {
+  private privateParam = 'initial value from class';
+
+  constructor() {
+    console.log(this.privateParam); // "initial value from class"
   }
 
-  initializeApp() {
-    this.platform.ready().then(() => {
-      this.statusBar.styleDefault();
-      this.splashScreen.hide();
-    });
+  ngOnInit() {
+    console.log(this.privateParam); // "overriden value from NavParams"
   }
 }
